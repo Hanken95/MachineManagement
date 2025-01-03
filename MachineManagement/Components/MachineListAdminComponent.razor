@@ -1,0 +1,71 @@
+﻿@inject GlobalStateMachineList MachineList
+
+@if (MachineList.Machines == null || !MachineList.Machines.Any())
+{
+    <p><em>Machinelist empty</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Id</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var machine in MachineList.Machines)
+            {
+                <tr>
+                    <td>@machine.Name</td>
+                    <td>@machine.Id</td>
+                    <td>
+                        @if (machine.Status)
+                        {
+                            <button class="btn btn-success" @onclick="() => SwitchStatus(machine)">
+                                Online
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-danger" @onclick="() => SwitchStatus(machine)">
+                                Offline
+                            </button>
+                        }
+                    </td>
+                    
+                    <button class="btn btn-warning" @onclick="() => RemoveMachine(machine)">Remove</button>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code 
+{
+    public void RemoveMachine(Machine machine)
+    {
+        MachineList.RemoveMachine(machine);
+    }
+    public void AddMachine(Machine machine)
+    {
+        MachineList.AddMachine(machine);
+    }
+
+    public void SwitchStatus(Machine machine)
+    {
+        MachineList.SwitchStatus(machine);
+    }
+
+    protected override void OnInitialized()
+    {
+        MachineList.OnChange += StateHasChanged;
+    }
+    private void Dispose()
+    {
+        MachineList.OnChange += StateHasChanged;
+    }
+}

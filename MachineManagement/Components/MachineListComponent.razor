@@ -1,0 +1,43 @@
+﻿@inject GlobalStateMachineList MachineList
+
+
+@if (MachineList.Machines == null || !MachineList.Machines.Any())
+{
+<p><em>Machinelist empty</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Id</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var machine in MachineList.Machines)
+        {
+            <tr>
+                <td>@machine.Name</td>
+                <td>@machine.Id</td>
+                <td>
+                    @if (machine.Status)
+                    {
+                        <button class="btn btn-success">
+                            Online
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger">
+                            Offline
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
