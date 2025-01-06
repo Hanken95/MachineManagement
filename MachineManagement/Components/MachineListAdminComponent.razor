@@ -1,4 +1,5 @@
 ﻿@inject GlobalStateMachineList MachineList
+@inject NavigationManager NavigationManager
 
 @if (MachineList.Machines == null || !MachineList.Machines.Any())
 {
@@ -12,6 +13,9 @@ else
                 <th>Name</th>
                 <th>Id</th>
                 <th>Status</th>
+                <th>Data count</th>
+                <th>Last data</th>
+                <th>Add data</th>
             </tr>
         </thead>
         <tbody>
@@ -34,38 +38,69 @@ else
                             </button>
                         }
                     </td>
-                    
+                    <td>@machine.Data.Count</td>
+                    @if (machine.LastData != null)
+                    {
+                        <td>@machine.LastData</td>
+                    }
+                    else
+                    {
+                        <td>No Data</td>
+                    }
+                    <td>
+                        <input type="text" @bind-value="DataInput[MachineList.Machines.IndexOf(machine)]" placeholder="Data to add..."/>
+                        <button class="btn btn-info" @onclick="() => AddData(machine)">Add data</button>
+                    </td>
+
                     <button class="btn btn-warning" @onclick="() => RemoveMachine(machine)">Remove</button>
+                    <button class="btn btn-warning" @onclick="() => UpdateMachine(machine)">Update Machine data</button>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-
+<AddMachineComponent/>
 
 @code 
 {
+    public List<string> DataInput { get; set; } = [];
+
+    public void UpdateMachine(Machine machine)
+    {
+        if (!MachineList.ChoseMachine(machine)) return;
+        NavigationManager.NavigateTo($"/updatemachine/");
+    }
+
     public void RemoveMachine(Machine machine)
     {
+        NavigationManager.Refresh(true);
         MachineList.RemoveMachine(machine);
-    }
-    public void AddMachine(Machine machine)
-    {
-        MachineList.AddMachine(machine);
     }
 
     public void SwitchStatus(Machine machine)
     {
+        NavigationManager.Refresh(true);
         MachineList.SwitchStatus(machine);
+    }
+
+    public void AddData(Machine machine)
+    {
+        NavigationManager.Refresh(true);
+        MachineList.AddDataToMachine(DataInput[MachineList.Machines.IndexOf(machine)], machine);
+        DataInput[MachineList.Machines.IndexOf(machine)] = "";
     }
 
     protected override void OnInitialized()
     {
         MachineList.OnChange += StateHasChanged;
+        for (int i = 0; i < MachineList.Machines.Count; i++)
+        {
+            DataInput.Add("");
+        }
     }
     private void Dispose()
     {
-        MachineList.OnChange += StateHasChanged;
+        MachineList.OnChange -= StateHasChanged;
     }
 }

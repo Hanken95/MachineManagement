@@ -1,0 +1,47 @@
+﻿@inject GlobalStateMachineList MachineList
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+
+<EditForm Model="NewMachine">
+	<DataAnnotationsValidator />
+
+	<div>
+		<label for="name">Name</label>
+		<InputText @bind-Value="NewMachine.Name" id="name" />
+	</div>
+	<div>
+		<label for="status">Online</label>
+		<InputCheckbox @bind-Value="NewMachine.Status" id="status" />
+	</div>
+	<div>
+		<label for="startdata">Start with data</label>
+		<InputCheckbox @bind-Value="StartData" id="startdata" />
+	</div>
+	<button type="submit" @onclick="AddMachineAsync">Add to list</button>
+
+	<ValidationSummary />
+</EditForm>
+
+
+@code 
+{
+	private Machine NewMachine = new Machine("", false, false);
+
+	private bool StartData = false;
+
+	public async void AddMachineAsync()
+	{
+		NavigationManager.Refresh(true);
+		if (StartData) NewMachine.AddSeedData();
+		if (!MachineList.AddMachine(NewMachine)) await JsRuntime.InvokeVoidAsync("alert", "Incorrect input!");
+	}
+	protected override void OnInitialized()
+	{
+		MachineList.OnChange += StateHasChanged;
+	}
+	private void Dispose()
+	{
+		MachineList.OnChange -= StateHasChanged;
+	}
+}

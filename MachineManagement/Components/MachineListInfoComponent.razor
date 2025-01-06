@@ -1,0 +1,32 @@
+﻿@inject GlobalStateMachineList MachineList
+
+<h3>Info</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Number of Machines:</th>
+            <td>@MachineList.Machines.Count</td>
+        </tr>
+        <tr>
+            <th>Number of online Machines:</th>
+            <td>@MachineList.Machines.Where(m => m.Status).Count()</td>
+        </tr>
+        <tr>
+            <th>Total number of Data:</th>
+            <td>@MachineList.TotalDataCount</td>
+        </tr>
+    </thead>
+</table>
+
+@code 
+{
+    protected override void OnInitialized()
+    {
+        MachineList.OnChange += StateHasChanged;
+    }
+    private void Dispose()
+    {
+        MachineList.OnChange -= StateHasChanged;
+    }
+}

@@ -13,6 +13,7 @@ else
             <th>Name</th>
             <th>Id</th>
             <th>Status</th>
+            <th>Data count</th>
         </tr>
     </thead>
     <tbody>
@@ -24,17 +25,18 @@ else
                 <td>
                     @if (machine.Status)
                     {
-                        <button class="btn btn-success">
+                        <button class="btn btn-outline-success">
                             Online
                         </button>
                     }
                     else
                     {
-                        <button class="btn btn-danger">
+                        <button class="btn btn-outline-danger">
                             Offline
                         </button>
                     }
                 </td>
+                <td>@machine.Data.Count</td>
             </tr>
         }
     </tbody>

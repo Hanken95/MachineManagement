@@ -11,23 +11,50 @@ namespace MachineManagement.Models
         public bool Status { get; set; } = false;
         public List<string> Data { get; set; } = [];
 
-        public bool IsValid => Id == Guid.Empty || string.IsNullOrWhiteSpace(Name);
+        public string? LastData => Data.LastOrDefault();
 
-        public Machine(string name, bool status)
+        public bool IsValid
+        {
+            get
+            {
+                return Id != Guid.Empty && !string.IsNullOrWhiteSpace(Name);
+            }
+        }
+
+        public Machine(string name, bool status, bool addSeedData = true)
         {
             Id = Guid.NewGuid();
             Name = name;
             Status = status;
-            AddSeedData(5);
+            if (addSeedData) AddSeedData();
         }
 
-        private void AddSeedData(int amount)
+        public bool AddData(string data)
+        {
+            if (string.IsNullOrWhiteSpace(data)) return false;   
+
+            Data.Add(data);
+            return true;
+        }
+
+        public bool EditData(string newData, int indexOfData)
+        {
+            if (string.IsNullOrWhiteSpace(newData)) return false;
+
+            Data[indexOfData] = newData;
+            return true;
+        }
+
+        public void AddSeedData()
         {
             var faker = new Faker();
-            for (int i = 0; i < amount; i++)
-            {
-                Data.Add(faker.Lorem.Text());
-            }
+            for (int i = 0; i < new Random().Next(2, 6); i++) Data.Add(faker.Lorem.Sentence(3, 2));
+        }
+
+        public void AddSeedData(int amount)
+        {
+            var faker = new Faker();
+            for (int i = 0; i < amount; i++) Data.Add(faker.Lorem.Sentence(3, 2));
         }
 
         public void SwitchStatus()

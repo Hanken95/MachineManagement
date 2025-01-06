@@ -1,0 +1,57 @@
+﻿@inject GlobalStateMachineList MachineList
+@inject NavigationManager NavigationManager
+
+
+<h3>Update  @Machine.Name</h3>
+
+<table class="table-bordered">
+
+	<tr>
+		<th>Current Data</th>
+		<th>New Data</th>
+		<th>Submit</th>
+	</tr>
+	@for (int i = 0; i < Machine.Data.Count; i++)
+	{
+		var local = i;
+		<tr>
+			<td>@Machine.Data[i]</td>
+			<td><input type="text" @bind-value="DataInput[local]" placeholder="Data to edit..." /></td>
+			<td><button class="btn btn-primary" @onclick="() => SubmitDataChange(local)">Submit</button></td>
+		</tr>
+	}
+
+</table>
+
+@code
+{
+	public Machine Machine { get; set; }
+	public List<string> DataInput { get; set; } = [];
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		MachineList.OnChange += StateHasChanged;
+		Machine = MachineList.ChosenMachine;
+		for (int i = 0; i < Machine.Data.Count; i++)
+		{
+			DataInput.Add("");
+		}
+
+	}
+	private void Dispose()
+	{
+		MachineList.OnChange -= StateHasChanged;
+	}
+
+
+	public void SubmitDataChange(int index)
+	{
+		NavigationManager.Refresh(true);
+		MachineList.UpdateData(DataInput[index], Machine, index);
+	}
+
+
+	//<input type="text" @bind-value="Machine.Data[Machine.Data.IndexOf(Machine.Data[i])]" placeholder="Data to edit..." />
+}
+

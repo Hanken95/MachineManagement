@@ -12,6 +12,29 @@ namespace MachineManagement.Service
         ];
         public Action? OnChange { get; set; }
 
+        public Machine ChosenMachine { get; private set; } = new Machine("", false);
+
+        public int TotalDataCount 
+        { 
+            get 
+                { 
+                    int total = 0;
+                    foreach  (var machine in Machines)
+                    {
+                        total += machine.Data.Count;
+                    }
+                    return total;
+                } 
+        }
+
+        public bool ChoseMachine(Machine machine)
+        {
+            if (machine == null) return false;
+            if (!Machines.Contains(machine)) return false;
+            ChosenMachine = machine;
+            return true;
+        }
+
         public bool AddMachine(Machine machine)
         {
             if (machine.IsValid)
@@ -33,6 +56,19 @@ namespace MachineManagement.Service
         {
             machine.SwitchStatus();
             NotifyStateChanged();
+        }
+
+        public bool AddDataToMachine(string data, Machine machine)
+        {
+            bool success = machine.AddData(data);
+            NotifyStateChanged();
+            return success;
+        }
+        public bool UpdateData(string newData, Machine machine, int index)
+        {
+            bool success = machine.EditData(newData, index);
+            NotifyStateChanged();
+            return success;
         }
 
 
